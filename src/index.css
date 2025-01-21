@@ -15,22 +15,22 @@
 }
 
 @layer utilities {
-  .scroll-hide {
+  .scrollbar-hide {
     -ms-overflow-style: none; /* IE and Edge */
     scrollbar-width: none; /* Firefox */
   }
-  .scroll-hide::-webkit-scrollbar {
-    display: none; /* Chrome, Safari, Opera */
+  .scrollbar-hide::-webkit-scrollbar {
+    display: none; /* Chrome, Safari and Opera */
   }
-  .scroll-bar::-webkit-scrollbar {
-    width: 6px;
-    height: 6px;
+  .scrollbar-simple::-webkit-scrollbar {
+    width: 7px;
+    height: 7px;
   }
-  .scroll-bar::-webkit-scrollbar-thumb {
-    background-color: #ccc;
-    border-radius: 3px;
+  .scrollbar-simple::-webkit-scrollbar-thumb {
+    background-color: #79797f;
+    border-radius: 4px;
   }
-  .scroll-bar::-webkit-scrollbar-track {
+  .scrollbar-simple::-webkit-scrollbar-track {
     background-color: #f1f1f1;
   }
 }
