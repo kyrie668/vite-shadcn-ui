@@ -1,14 +1,18 @@
 #!/usr/bin/env node
-const { execSync } = require('child_process');
-const { Command } = require('commander');
-const simpleGit = require('simple-git');
+import { execSync } from 'child_process';
+import simpleGit from 'simple-git';
+import { Command } from 'commander';
+import chalk from 'chalk';
+import ora from 'ora';
+import path from 'path';
+import fs from 'fs';
+import { createRequire } from 'module';
 
-const chalk = require('chalk');
-const ora = require('ora');
-const path = require('path');
-const fs = require('fs');
+// 因为 ES 模块中无法直接使用 require，使用 createRequire 读取 package.json
+const require = createRequire(import.meta.url);
 const { version } = require('./package.json');
 
+// 初始化 Commander
 const program = new Command();
 const git = simpleGit();
 

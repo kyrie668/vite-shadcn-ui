@@ -1,11 +1,12 @@
 {
   "name": "vite-shadcn-ui-cli",
-  "version": "1.0.4",
+  "version": "1.0.5",
   "description": "A CLI tool to bootstrap Vite projects with shadcn UI components",
-  "main": "index.cjs",
+  "main": "index.js",
   "bin": {
-    "create-vite-shadcn-ui": "./index.cjs"
+    "create-vite-shadcn-ui": "./index.js"
   },
+  "type":"module",
   "scripts": {
     "dev": "vite",
     "build": "tsc -b && vite build",
