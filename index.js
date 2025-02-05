@@ -23,32 +23,61 @@ program
 
 program
   .argument('<project-directory>', 'Directory to create your new project')
-  .action((projectDirectory) => {
-    const repoUrl = 'https://github.com/kyrie668/vite-shadcn-ui.git';
-    const projectPath = path.resolve(process.cwd(), projectDirectory);
+  .action(async (projectDir) => {
+    const targetPath = path.resolve(process.cwd(), projectDir);
 
-    console.log(`\n📦 Cloning project into ${projectDirectory}...\n`);
+    // 检查目录是否已存在
+    if (fs.existsSync(targetPath)) {
+      console.log(chalk.red(`\n❌ The directory "${projectDir}" already exists!`));
 
-    // 克隆仓库
-    execSync(`git clone ${repoUrl} ${projectDirectory}`, { stdio: 'inherit' });
+      const readline = await import('readline');
+      const rl = readline.createInterface({
+        input: process.stdin,
+        output: process.stdout,
+      });
 
-    // 删除 .git 文件夹
-    const gitPath = path.join(projectPath, '.git');
-    if (fs.existsSync(gitPath)) {
-      fs.rmSync(gitPath, { recursive: true, force: true });
+      // 提示用户选择
+      rl.question('Do you want to overwrite it? (y/N): ', (answer) => {
+        rl.close();
+        if (answer.toLowerCase() === 'y') {
+          fs.rmSync(targetPath, { recursive: true, force: true });
+          console.log(chalk.yellow(`\n⚠️ The existing directory "${projectDir}" was removed.`));
+          cloneRepo(projectDir);
+        } else {
+          console.log(chalk.blue('\nOperation cancelled.'));
+          process.exit(1);
+        }
+      });
+    } else {
+      cloneRepo(projectDir);
     }
-
-    console.log(`\n🎉 Project setup complete!`);
-    console.log(`\nNext steps:\n`);
-    console.log(`  cd ${projectDirectory}`);
-    console.log(`  npm install`);
-    console.log(`  npm run dev`);
-    console.log(`\nTo initialize a new Git repository:\n`);
-    console.log(`  git init`);
-    console.log(`  git remote add origin <your-repo-url>`);
-    console.log(`  git add .`);
-    console.log(`  git commit -m "Initial commit"`);
-    console.log(`  git push -u origin main\n`);
   });
+
+program.parse(process.argv);
+
+// 克隆 GitHub 仓库的函数
+async function cloneRepo(projectDir) {
+  const spinner = ora('Cloning the repository...').start();
+  const repoUrl = 'https://github.com/kyrie668/vite-shadcn-ui.git';
+
+  try {
+    await git.clone(repoUrl, projectDir);
+    spinner.succeed('Project cloned successfully!');
+
+    // 移除 .git 文件夹以断开 Git 关联
+    fs.rmSync(path.join(projectDir, '.git'), { recursive: true, force: true });
+    console.log(
+      chalk.green('\n✅ Git history removed. You can now initialize your own repository.')
+    );
+    console.log(chalk.cyan(`\n👉 Next steps:`));
+    console.log(`   cd ${projectDir}`);
+    console.log('   npm install');
+    console.log('   npm run dev');
+  } catch (error) {
+    spinner.fail('Failed to clone the repository.');
+    console.error(error);
+    process.exit(1);
+  }
+}
 
 program.parse();
