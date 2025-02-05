@@ -36,13 +36,22 @@ program
         output: process.stdout,
       });
 
-      // 提示用户选择
-      rl.question('Do you want to overwrite it? (y/N): ', (answer) => {
+      // 提示用户是否覆盖
+      rl.question('Do you want to overwrite it? (y/N): ', async (answer) => {
         rl.close();
         if (answer.toLowerCase() === 'y') {
-          fs.rmSync(targetPath, { recursive: true, force: true });
-          console.log(chalk.yellow(`\n⚠️ The existing directory "${projectDir}" was removed.`));
-          cloneRepo(projectDir);
+          try {
+            await fs.promises.rm(targetPath, { recursive: true, force: true });
+            console.log(chalk.yellow(`\n⚠️ The existing directory "${projectDir}" was removed.`));
+
+            // 增加延时确保系统释放资源
+            setTimeout(() => {
+              cloneRepo(projectDir);
+            }, 500); // 500ms 延时
+          } catch (err) {
+            console.error(chalk.red(`Failed to remove directory: ${err.message}`));
+            process.exit(1);
+          }
         } else {
           console.log(chalk.blue('\nOperation cancelled.'));
           process.exit(1);
@@ -61,23 +70,22 @@ async function cloneRepo(projectDir) {
   const repoUrl = 'https://github.com/kyrie668/vite-shadcn-ui.git';
 
   try {
-    await git.clone(repoUrl, projectDir);
+    execSync(`git clone ${repoUrl} ${projectDir}`, { stdio: 'ignore' });
     spinner.succeed('Project cloned successfully!');
 
     // 移除 .git 文件夹以断开 Git 关联
-    fs.rmSync(path.join(projectDir, '.git'), { recursive: true, force: true });
+    await fs.promises.rm(path.join(projectDir, '.git'), { recursive: true, force: true });
     console.log(
       chalk.green('\n✅ Git history removed. You can now initialize your own repository.')
     );
+
     console.log(chalk.cyan(`\n👉 Next steps:`));
     console.log(`   cd ${projectDir}`);
     console.log('   npm install');
     console.log('   npm run dev');
   } catch (error) {
     spinner.fail('Failed to clone the repository.');
-    console.error(error);
+    console.error(chalk.red(`\nError: ${error.message}`));
     process.exit(1);
   }
 }
-
-program.parse();
