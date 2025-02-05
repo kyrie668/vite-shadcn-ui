@@ -1,8 +1,8 @@
 {
   "name": "vite-shadcn-ui-cli",
-  "version": "1.0.3",
+  "version": "1.0.4",
   "description": "A CLI tool to bootstrap Vite projects with shadcn UI components",
-  "main": "index.js",
+  "main": "index.cjs",
   "bin": {
     "create-vite-shadcn-ui": "./index.cjs"
   },
@@ -23,7 +23,8 @@
     "tailwindcss-animate": "^1.0.7",
     "simple-git": "^3.8.0",
     "chalk": "^4.1.2",
-    "ora": "^6.0.0"
+    "ora": "^6.0.0",
+    "commander": "^11.0.0"
   },
   "devDependencies": {
     "@eslint/js": "^9.17.0",
