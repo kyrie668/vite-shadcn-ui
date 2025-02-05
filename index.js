@@ -62,8 +62,6 @@ program
     }
   });
 
-program.parse(process.argv);
-
 // 克隆 GitHub 仓库的函数
 async function cloneRepo(projectDir) {
   const spinner = ora('Cloning the repository...').start();
@@ -89,3 +87,4 @@ async function cloneRepo(projectDir) {
     process.exit(1);
   }
 }
+program.parse();
