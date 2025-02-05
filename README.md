@@ -8,14 +8,15 @@ You can install the CLI globally using npm:
 
 ```sh
 npm install -g vite-shadcn-ui-cli
-vite-shadcn-ui my-project
+create-vite-shadcn-ui my-project
 ```
 
 ## Example:
 
 ```sh
-vite-shadcn-ui my-app
+create-vite-shadcn-ui my-app
 cd my-app
+npm install
 npm run dev
 ```
 
